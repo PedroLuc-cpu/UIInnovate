@@ -27,8 +27,12 @@ const createPerson = async (name: string, salary: string, approved: boolean, sex
     }
     try {
         const {data} = await API.post("/person", body);
-        if(data) return data;
-        return new Error("Erro de cadastrar os usuarios");
+        if(data){
+            return data
+        }else{
+            return new Error("Erro de cadastrar os usuarios");
+        }
+        
     } catch (error) {
         console.error(error)
         return new Error((error as {message: string}).message || "Erro de cadastrar os usuarios")

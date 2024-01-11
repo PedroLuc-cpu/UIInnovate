@@ -1,49 +1,48 @@
-import { useEffect, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 import { IPerson } from "../../model/Persons/person"
 import { PersonService } from "../../services/api/persons/PersonServices";
 import { PageLayout } from "../../layout/PageLayout";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { Button } from "../../components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
+import { useParams } from "react-router";
+import NetworkError from "../../components/erros/NetworkError";
 
 
 
 function ListarFuncionarios() {
     const [funcionarios, setFuncionarios] = useState<IPerson[]>([]);
+    const [getErro, setGetErro] = useState("")
 
     useEffect(() => {
         PersonService.getAll().then((result) => {
             if(result instanceof Error){
-                alert(result.message)
+                return setGetErro(result.message)
             }else{
                 setFuncionarios(result);
             }
         });
     }, [])
 
+    const {id} = useParams<"id">()
+
+    console.log(id)
+
     return (
         <PageLayout
             title="Funcionarios"
         >
-            <div>
-            <div className="flex bg-slate-800 h-32 items-center p-2">
-                <Label className="text-gray-200 flex gap-1">
-                    Buscar por nome
-                    <Input className="text-black"/>
-                    <Button variant={"outline"} className="text-black">Buscar</Button>
-                </Label>
-            </div>
             <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead className="font-bold">Nome</TableHead>
-                        <TableHead className="font-bold">Salário</TableHead>
-                        <TableHead className="font-bold">Aprovação</TableHead>
-                        <TableHead className="font-bold">Sexo</TableHead>
-                    </TableRow>
-                </TableHeader>
-                    <TableBody>
+                {
+                    funcionarios.length <= 0 ? <NetworkError message={getErro} name="Comunicação com o banco de dados" /> : (
+                    <Fragment>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="font-bold">Nome</TableHead>
+                                    <TableHead className="font-bold">Salário</TableHead>
+                                    <TableHead className="font-bold">Aprovação</TableHead>
+                                    <TableHead className="font-bold">Sexo</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
                         {
                             funcionarios.map((result, index) => (
                                 <TableRow key={index}>
@@ -55,8 +54,10 @@ function ListarFuncionarios() {
                             ))
                         }
                     </TableBody>
+                    </Fragment>
+                    )
+                }
             </Table>
-            </div>
         </PageLayout>
     )
 }

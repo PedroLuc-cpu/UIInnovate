@@ -4,13 +4,10 @@ import {  Form, FormControl, FormDescription, FormField, FormItem, FormLabel, Fo
 import { Input } from '../../components/ui/input'
 import { PageLayout } from '../../layout/PageLayout'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../../components/ui/command'
-import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover'
-import { Check, ChevronsUpDown } from 'lucide-react'
-import { cn } from '../../lib/utils'
 import { useState } from 'react'
 import { PersonService } from '../../services/api/persons/PersonServices'
 import { useForm } from 'react-hook-form'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select'
 
 
 const formSchema = z.object({
@@ -21,13 +18,13 @@ const formSchema = z.object({
     })
 
     const sexo = [
-        { label: "Masculino", value: "m" },
-        { label: "Feminino", value: "f" },
+        { label: "masculino", value: "masculino" },
+        { label: "feminino", value: "feminino" },
     ] as const
 
     const selecaoAprovacao = [
-        { label: "Aprovado", value: "a" },
-        { label: "Reprovado", value: "r" },
+        { label: "Aprovado", value: "Aprovado" },
+        { label: "Reprovado", value: "Reprovado" },
     ] as const
 
 
@@ -42,42 +39,18 @@ function CadastrarFuncionarios() {
         }
     })
 
-    const FormSchemaCombox = z.object({
-        sexy: z.string({
-            required_error: "Selecione seu sexo",
-        }),
-        })
-
-        const FormSchemaComboxApproved = z.object({
-            approved: z.string({
-                required_error: "Selecione seu sexo",
-            }),       
-            })
-
-    const comboxSexo = useForm<z.infer<typeof FormSchemaCombox>>({
-        resolver: zodResolver(FormSchemaCombox),
-    })      
-
-    const comboxApproved = useForm<z.infer<typeof FormSchemaComboxApproved>>({
-        resolver: zodResolver(FormSchemaComboxApproved),
-    })
-
     const [name, setName] = useState("")
     const [salary, setSalary] = useState("")
     const [approved, setApproved] = useState(false)
-    const [sexy, setSexy] = useState("masculino")
+    const [sexy, setSexy] = useState("")
 
-    
-    // const {register, handleSubmit} = useForm<IPerson>()
-    
-    // const onSubmit : SubmitHandler<IPerson> = (data) => console.log(data)
-
-
-    const handleSave = () => [
-        PersonService.createPerson(name, salary, approved, sexy).then((result) => {
-            console.log(result)
+    const handleSave = () => {
+        PersonService.createPerson(name, salary, approved, sexy).then(() => {
         })
-    ]
+        .catch(err => {
+            console.log(err)
+        })
+    }
 
     return (
         <PageLayout 
@@ -115,131 +88,33 @@ function CadastrarFuncionarios() {
                         </FormItem>
                     )}
                     />
+                    <div className='grid grid-cols-2 gap-4 pt-2'>
+                        <Select onValueChange={(e) => {setApproved(e.valueOf() === "Aprovado" ? true : false)}}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Avaliação"/>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {
+                                    selecaoAprovacao.map((item, index) => (
+                                        <SelectItem key={index} value={item.value}>{item.label}</SelectItem>
+                                    ))
+                                }
+                            </SelectContent>
+                        </Select>
 
-                <div className='flex pt-3'>
-                <FormField
-            control={comboxApproved.control}
-            name="approved"
-            render={({ field }) => (
-            <FormItem className="flex flex-col">
-                <FormLabel>Aprovação do funcionario</FormLabel>
-                <Popover>
-                <PopoverTrigger asChild>
-                    <FormControl>
-                    <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                        "w-[200px] justify-between",
-                        !field.value && "text-muted-foreground"
-                        )}
-                    >
-                        {field.value
-                        ? selecaoAprovacao.find(
-                            (language) => language.value === field.value
-                            )?.label
-                        : "Selecione sua aprovação"}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                    </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
-                    <Command>
-                    <CommandInput placeholder="Search language..." name='approved'/>
-                    <CommandEmpty>No language found.</CommandEmpty>
-                    <CommandGroup>
-                        {selecaoAprovacao.map((aprovacao) => (
-                            <CommandItem
-                            value={aprovacao.label}
-                            key={aprovacao.value}
-                            onSelect={() => {
-                                comboxApproved.setValue("approved", aprovacao.value)
-                            }}
-                            >
-                            <Check
-                                className={cn(
-                                "mr-2 h-4 w-4",
-                                aprovacao.value === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                            />
-                            {aprovacao.label}
-                        </CommandItem>
-                        ))}
-                    </CommandGroup>
-                    </Command>
-                </PopoverContent>
-                </Popover>
-                <FormDescription>
-                This is the language that will be used in the dashboard.
-                </FormDescription>
-                <FormMessage />
-            </FormItem>
-            )}
-        />
-        <FormField
-            control={comboxSexo.control}
-            name="sexy"
-            render={({ field }) => (
-            <FormItem className="flex flex-col">
-                <FormLabel>Sexo</FormLabel>
-                <Popover>
-                <PopoverTrigger asChild>
-                    <FormControl>
-                    <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                        "w-[200px] justify-between",
-                        !field.value && "text-muted-foreground"
-                        )}
-                    >
-                        {field.value
-                        ? sexo.find(
-                            (sexo) => sexo.value === field.value
-                            )?.label
-                        : "selecione o sexo"}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                    </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
-                    <Command>
-                    <CommandInput placeholder="Search language..." name='sexy'/>
-                    <CommandEmpty>No language found.</CommandEmpty>
-                    <CommandGroup>
-                        {sexo.map((sexo) => (
-                            <CommandItem
-                            value={sexo.label}
-                            key={sexo.value}
-                            onSelect={() => {
-                                comboxSexo.setValue("sexy", sexo.value)
-                            }}
-                            >
-                            <Check
-                                className={cn(
-                                "mr-2 h-4 w-4",
-                                sexo.value === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                            />
-                            {sexo.label}
-                        </CommandItem>
-                        ))}
-                    </CommandGroup>
-                    </Command>
-                </PopoverContent>
-                </Popover>
-                <FormDescription>
-                This is the language that will be used in the dashboard.
-                </FormDescription>
-                <FormMessage />
-            </FormItem>
-            )}
-        />
-                </div>
+                        <Select onValueChange={(e) => setSexy(e.valueOf())}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Escolha o sexo"/>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {
+                                    sexo.map((item, index) => (
+                                        <SelectItem key={index} value={item.value}>{item.label}</SelectItem>
+                                    ))
+                                }
+                            </SelectContent>
+                        </Select>
+                    </div>
 
                 <div className='flex gap-2 pt-2'>
                 <Button onClick={() => handleSave()}>Cadastrar</Button>
