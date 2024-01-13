@@ -4,14 +4,12 @@ import { AppRoute } from "./routes";
 
 function App() {
 
-
   return (
     <Router>
       <AppMenuLateralProvider>
           <AppRoute/>
       </AppMenuLateralProvider>
     </Router>
-  
   )
 }
 

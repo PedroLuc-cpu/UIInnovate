@@ -1,31 +1,36 @@
-import { PropsWithChildren, createContext, useCallback, useContext, useState } from "react";
+import {
+	PropsWithChildren,
+	createContext,
+	useCallback,
+	useContext,
+	useState,
+} from "react";
 import { MenuSection } from "../model";
 
-
-
 interface MenuLateralSectionsData {
-    sections: MenuSection[]
-    setSections: (sections: MenuSection[]) => void
+	sections: MenuSection[];
+	setSections: (sections: MenuSection[]) => void;
 }
 
-
-export const AppMenuLateralContext = createContext({} as MenuLateralSectionsData);
+export const AppMenuLateralContext = createContext(
+	{} as MenuLateralSectionsData
+);
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useMenuLateral = () => useContext(AppMenuLateralContext);
-    
-export const AppMenuLateralProvider = ({children}: PropsWithChildren) => {
 
-    const [sections, setSections] = useState<MenuSection[]>([])
+export const AppMenuLateralProvider = ({ children }: PropsWithChildren) => {
+	const [sections, setSections] = useState<MenuSection[]>([]);
 
+	const handleSetMenuLateral = useCallback((newMenuOptions: MenuSection[]) => {
+		setSections(newMenuOptions);
+	}, []);
 
-    const handleSetMenuLateral = useCallback((newMenuOptions: MenuSection[]) =>{
-        setSections(newMenuOptions)
-    }, [])
-
-    return (
-        <AppMenuLateralContext.Provider value={{sections, setSections: handleSetMenuLateral}}>
-            {children}
-        </AppMenuLateralContext.Provider>
-    )
-}
+	return (
+		<AppMenuLateralContext.Provider
+			value={{ sections, setSections: handleSetMenuLateral }}
+		>
+			{children}
+		</AppMenuLateralContext.Provider>
+	);
+};
