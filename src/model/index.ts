@@ -1,1 +1,1 @@
-export * from "./menu-latetal";
+export * from './menu-latetal'

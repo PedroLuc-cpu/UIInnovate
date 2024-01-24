@@ -1,1 +1,1 @@
-export * from "./Funcionarios/Listar"
+export * from './Funcionarios/Listar'

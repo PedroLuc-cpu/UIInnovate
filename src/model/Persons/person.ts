@@ -1,7 +1,7 @@
 export interface IPerson {
-  id: string,
-  name: string,
+  id: string
+  name: string
   salary: number
   approved: boolean
-  sexy: "masculino" | "feminino"
+  sexy: 'masculino' | 'feminino'
 }

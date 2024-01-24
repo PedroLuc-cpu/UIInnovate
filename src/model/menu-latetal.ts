@@ -1,17 +1,15 @@
-import { ReactNode } from "react";
-
-
+import { ReactNode } from 'react'
 
 /**
  * Define uma opção (item) de navegação do drawer.
  */
 export interface MenuOptions {
   /** Caminho da rota representada pela opção de navegação. */
-  path: string;
+  path: string
   /** Ícone que será exibido ao lado do nome da opção de navegação.  */
-  icon: ReactNode;
+  icon: ReactNode
   /** Nome da opção de navegação. */
-  label: string;
+  label: string
 }
 
 /**
@@ -21,9 +19,9 @@ export interface MenuOptions {
  */
 export interface MenuSection {
   /** Defina se a seção será exibida. */
-  show: boolean;
+  show: boolean
   /** Título da seção de navegação. */
-  title: string;
+  title: string
   /** Opções de navegação da seção. */
   options: MenuOptions[]
 }

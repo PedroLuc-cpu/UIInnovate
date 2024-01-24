@@ -1,2 +1,2 @@
-export * from "../interceptos/ErroInterceptors"
-export * from "../interceptos/ResponseInterceptors"
+export * from '../interceptos/ErroInterceptors'
+export * from '../interceptos/ResponseInterceptors'
